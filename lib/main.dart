@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:mantra_biometric/mantra_biometric.dart';
 import 'package:mantra_biometric/utils/mantra_plugin_exception.dart';
@@ -8,7 +9,15 @@ import 'package:xml/xml.dart';
 import 'package:collection/collection.dart';
 
 void main() {
-  runApp(MaterialApp(home: const MyApp()));
+  runApp(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true
+        ),
+      home: MyApp(),
+
+      )
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -42,7 +51,7 @@ class _MyAppState extends State<MyApp> {
       result = output;
       setState(() {});
     } on RDClientNotFound catch (e) {
-      displyAlert("Install Clinet");
+      displyAlert("Mantra RD Service not installed");
     } catch (e) {
       displyAlert("Something Went Wrong");
     }
@@ -60,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {});
     } on RDClientNotFound catch (e) {
       log("${e.code}");
-      displyAlert("Install Clinet");
+      displyAlert("Mantra RD Service not installed");
     } catch (e) {
       displyAlert("Something Went Wrong ${e.runtimeType} $e");
     }
@@ -70,27 +79,37 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mantra Biometric Example'),
+        title: const Text('Biometric Testing'),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            MaterialButton(
-              onPressed: getDeviceInfo,
-              child: const Text("Get Device Information"),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            MaterialButton(
-              onPressed: scanFingerPrint,
-              child: const Text("Scan Fingure Print"),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text("$result")
-          ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: getDeviceInfo,
+                child: const Text("Device Information"),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: scanFingerPrint,
+                child: const Text("SCAN"),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(onPressed: ()async{
+                await Clipboard.setData(ClipboardData(text: "$result"));
+              }, child: Text("Copy")),
+              const SizedBox(
+                height: 20,
+              ),
+              Text("$result")
+            ],
+          ),
         ),
       ),
     );
